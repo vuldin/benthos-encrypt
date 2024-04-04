@@ -1,0 +1,16 @@
+#licenseFilepath: /tmp/redpanda.license
+kafka:
+  brokers:
+  - "redpanda-0.local:29092"
+  schemaRegistry:
+    enabled: true
+    urls:
+    - "http://redpanda-0.local:28081"
+redpanda:
+  adminApi:
+    enabled: true
+    urls:
+    - "http://redpanda-0.local:9644"
+analytics:
+  enabled: false
+

@@ -1,0 +1,35 @@
+http:
+  enabled: false
+
+input:
+  generate:
+    interval: 1s
+    mapping: |
+      root.ID = uuid_v4()
+      root.Name = [ "frosty", "spot", "oodles" ].index(random_int() % 3)
+      root.Address = "123 Happy St"
+      root.Gooeyness = (random_int() % 100) / 100
+      root.Bouncing = random_int() % 2 == 0
+
+pipeline:
+  processors:
+    #- schema_registry_encode:
+    #    url: http://redpanda:8081
+    #    subject: benthos_example
+    #    refresh_period: 15s
+
+    - encrypt:
+        fields: [ Name, Address ]
+        keyString: 532468f222e3394d3363ca4bbc19235a2590ae38a456e573038ea0b508b2d467
+
+    - catch:
+      - log:
+          level: ERROR
+          message: ${! error() }
+      - bloblang: root = deleted()
+
+output:
+  kafka:
+    addresses: [ localhost:9092 ]
+    topic: encrypted
+
